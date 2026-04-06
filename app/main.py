@@ -1,6 +1,11 @@
 from fastapi import FastAPI, Request
 from pathlib import Path
 import json
+from .bitrix_app_client import (
+    register_connector,
+    activate_connector,
+    send_test_message_to_bitrix,
+)
 
 app = FastAPI()
 
@@ -27,3 +32,15 @@ async def bitrix_install(request: Request):
         "keys": list(data.keys()),
         "data": data
     }
+
+@app.post("/app/register_connector")
+def app_register_connector():
+    return register_connector()
+
+@app.post("/app/activate_connector")
+def app_activate_connector():
+    return activate_connector()
+
+@app.post("/app/test_message")
+def app_test_message():
+    return send_test_message_to_bitrix()
