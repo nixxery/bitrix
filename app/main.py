@@ -16,8 +16,14 @@ async def bitrix_install(request: Request):
         form = await request.form()
         data = dict(form)
 
-    Path("storage").mkdir(exist_ok=True)
-    with open("storage/bitrix_install.json", "w", encoding="utf-8") as f:
+    print("BITRIX INSTALL DATA:", data)
+
+    Path("/tmp").mkdir(exist_ok=True)
+    with open("/tmp/bitrix_install.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    return {"status": "saved"}
+    return {
+        "status": "saved",
+        "keys": list(data.keys()),
+        "data": data
+    }
