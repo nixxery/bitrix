@@ -126,3 +126,33 @@ def send_test_message() -> Dict[str, Any]:
         ]
     }
     return bitrix_app_call("imconnector.send.messages", params)
+
+def send_message_to_bitrix(
+    external_user_id: str,
+    external_chat_id: str,
+    external_message_id: str,
+    text: str,
+    user_name: str = "Клиент",
+) -> Dict[str, Any]:
+    params = {
+        "CONNECTOR": CONNECTOR_CODE,
+        "LINE": LINE_ID,
+        "MESSAGES": [
+            {
+                "user": {
+                    "id": external_user_id,
+                    "name": user_name,
+                },
+                "message": {
+                    "id": external_message_id,
+                    "date": 1775570000,
+                    "text": text,
+                },
+                "chat": {
+                    "id": external_chat_id,
+                    "name": f"Chat {external_chat_id}",
+                }
+            }
+        ]
+    }
+    return bitrix_app_call("imconnector.send.messages", params)
