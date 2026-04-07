@@ -69,7 +69,7 @@ def test_methods() -> Dict[str, Any]:
 
 def register_connector() -> Dict[str, Any]:
     params = {
-        "CODE": CONNECTOR_CODE,
+        "ID": "my_site_chat",        # было CODE, стало ID
         "NAME": "My Site Chat",
     }
     return bitrix_app_call("imconnector.register", params)
