@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from pathlib import Path
 import json
 import time
-
+from pydantic import BaseModel
 from .bitrix_app_client import (
     test_methods,
     register_connector,
@@ -11,6 +11,13 @@ from .bitrix_app_client import (
     send_message_to_bitrix,
 )
 
+class IncomingMessage(BaseModel):
+    user_id: str = "site-user-1"
+    chat_id: str = "site-chat-1"
+    message_id: str = "site-msg-1"
+    text: str = "Привет, это сообщение с сайта"
+    user_name: str = "Иван"
+    
 app = FastAPI(title="Bitrix Bridge")
 
 
@@ -64,22 +71,16 @@ def app_send_test_message():
 
 
 @app.post("/external/incoming-message")
-async def external_incoming_message(request: Request):
-    data = await request.json()
-    print("EXTERNAL INCOMING:", data)
-
-    external_user_id = str(data.get("user_id", "ext-user-1"))
-    external_chat_id = str(data.get("chat_id", "ext-chat-1"))
-    external_message_id = str(data.get("message_id", f"msg-{int(time.time())}"))
-    text = str(data.get("text", "Пустое сообщение"))
-    user_name = str(data.get("user_name", "Клиент"))
+def external_incoming_message(data: IncomingMessage):
+    payload = data.model_dump()
+    print("EXTERNAL INCOMING:", payload)
 
     result = send_message_to_bitrix(
-        external_user_id=external_user_id,
-        external_chat_id=external_chat_id,
-        external_message_id=external_message_id,
-        text=text,
-        user_name=user_name,
+        external_user_id=payload["user_id"],
+        external_chat_id=payload["chat_id"],
+        external_message_id=payload["message_id"],
+        text=payload["text"],
+        user_name=payload["user_name"],
     )
 
     print("BITRIX SEND RESULT:", result)
@@ -88,7 +89,7 @@ async def external_incoming_message(request: Request):
     with open("/tmp/last_external_to_bitrix.json", "w", encoding="utf-8") as f:
         json.dump(
             {
-                "incoming": data,
+                "incoming": payload,
                 "bitrix_result": result,
             },
             f,
