@@ -69,11 +69,20 @@ def test_methods() -> Dict[str, Any]:
 
 def register_connector() -> Dict[str, Any]:
     params = {
-        "ID": "my_site_chat",        # было CODE, стало ID
+        "ID": "my_site_chat",
         "NAME": "My Site Chat",
+        "ICON": {
+            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
+            "COLOR": "#69acc0",
+            "SIZE": "90%",
+            "POSITION": "center"
+        },
+        "ICON_DISABLED": {
+            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#99adb3'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
+            "COLOR": "#99adb3"
+        }
     }
     return bitrix_app_call("imconnector.register", params)
-
 
 def activate_connector() -> Dict[str, Any]:
     params = {
