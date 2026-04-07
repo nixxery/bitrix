@@ -78,9 +78,10 @@ def register_connector() -> Dict[str, Any]:
             "POSITION": "center"
         },
         "ICON_DISABLED": {
-            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#99adb3'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
+            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2399adb3'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
             "COLOR": "#99adb3"
-        }
+        },
+        "PLACEMENT_HANDLER": "https://bitrix-3.onrender.com/bitrix/install"
     }
     return bitrix_app_call("imconnector.register", params)
 
