@@ -72,16 +72,26 @@ def register_connector() -> Dict[str, Any]:
         "ID": "my_site_chat",
         "NAME": "My Site Chat",
         "ICON": {
-            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
+            "DATA_IMAGE": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22currentColor%22%3E%3Cpath%20d%3D%22M20%204H4c-1.1%200-1.99.9-1.99%202L2%2018c0%201.1.9%202%202%202h16c1.1%200%202-.9%202-2V6c0-1.1-.9-2-2-2zm0%2014H4V8l8%205%208-5v10zm-8-7L4%206h16l-8%205z%22/%3E%3C/svg%3E",
             "COLOR": "#69acc0",
             "SIZE": "90%",
             "POSITION": "center"
         },
+        "PLACEMENT_HANDLER": "https://bitrix-3.onrender.com/bitrix/install",
         "ICON_DISABLED": {
-            "DATA_IMAGE": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2399adb3'%3E%3Cpath d='M20 4H4c-1.1 0-1.99 .9-1.99 2L2 18c0 1.1 .9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z'/%3E%3C/svg%3E",
-            "COLOR": "#99adb3"
+            "DATA_IMAGE": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%2399adb3%22%3E%3Cpath%20d%3D%22M20%204H4c-1.1%200-1.99.9-1.99%202L2%2018c0%201.1.9%202%202%202h16c1.1%200%202-.9%202-2V6c0-1.1-.9-2-2-2zm0%2014H4V8l8%205%208-5v10zm-8-7L4%206h16l-8%205z%22/%3E%3C/svg%3E",
+            "COLOR": "#99adb3",
+            "SIZE": "90%",
+            "POSITION": "center"
         },
-        "PLACEMENT_HANDLER": "https://bitrix-3.onrender.com/bitrix/install"
+        "DEL_EXTERNAL_MESSAGES": True,
+        "EDIT_INTERNAL_MESSAGES": True,
+        "DEL_INTERNAL_MESSAGES": True,
+        "NEWSLETTER": True,
+        "NEED_SYSTEM_MESSAGES": True,
+        "NEED_SIGNATURE": True,
+        "CHAT_GROUP": False,
+        "COMMENT": "Настройка канала"
     }
     return bitrix_app_call("imconnector.register", params)
 
