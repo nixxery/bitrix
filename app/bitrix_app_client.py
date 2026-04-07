@@ -4,11 +4,14 @@ from typing import Dict, Any
 import json
 from pathlib import Path
 
-# Данные из твоего bitrix_install.json
-DOMAIN = "b24-nzzmi5.bitrix24.ru"
-MEMBER_ID = "2ec7e1e767b504067b5f237e988c2406"
+# Данные из bitrix_install.json
+CLIENT_ENDPOINT = "https://b24-nzzmi5.bitrix24.ru/rest/"
 ACCESS_TOKEN = "c248d469008323000082458e000000010000073597a1deae70f33575c348f135f2b6f0"
 REFRESH_TOKEN = "b2c7fb69008323000082458e00000001000007768b3c7c557b9f865938c4350a7d0679"
+
+CLIENT_ID = "local.69d4326d55b427.59427213"
+CLIENT_SECRET = "gCGC2KgmFuUpnkUbR2w442Sg5twfYxJBxpRfR9G0YGMe1Xeajz"
+
 LINE_ID = 1
 CONNECTOR_CODE = "my_site_chat"
 
