@@ -1,21 +1,22 @@
-# app/bitrix_app_client.py
 import requests
 from typing import Dict, Any
-import json
-from pathlib import Path
 
-# Данные из bitrix_install.json
 CLIENT_ENDPOINT = "https://b24-nzzmi5.bitrix24.ru/rest/"
 ACCESS_TOKEN = "c248d469008323000082458e000000010000073597a1deae70f33575c348f135f2b6f0"
 REFRESH_TOKEN = "b2c7fb69008323000082458e00000001000007768b3c7c557b9f865938c4350a7d0679"
 
-CLIENT_ID = "local.69d4326d55b427.59427213"
+# СЮДА ВСТАВЬ СВОИ НАСТОЯЩИЕ ДАННЫЕ
+CLIENT_ID = "Тlocal.69d4326d55b427.59427213"
 CLIENT_SECRET = "gCGC2KgmFuUpnkUbR2w442Sg5twfYxJBxpRfR9G0YGMe1Xeajz"
 
 LINE_ID = 1
 CONNECTOR_CODE = "my_site_chat"
 
+
 def refresh_access_token() -> str:
+    global ACCESS_TOKEN
+    global REFRESH_TOKEN
+
     url = "https://oauth.bitrix.info/oauth/token/"
     data = {
         "grant_type": "refresh_token",
@@ -30,8 +31,6 @@ def refresh_access_token() -> str:
     resp.raise_for_status()
 
     result = resp.json()
-
-    global ACCESS_TOKEN, REFRESH_TOKEN
     ACCESS_TOKEN = result["access_token"]
     REFRESH_TOKEN = result["refresh_token"]
 
@@ -55,6 +54,7 @@ def bitrix_app_call(method: str, params: Dict[str, Any]) -> Dict[str, Any]:
         print("ACCESS TOKEN EXPIRED, TRYING REFRESH...")
         refresh_access_token()
         payload["auth"] = ACCESS_TOKEN
+
         resp = requests.post(url, json=payload, timeout=20)
         print("RETRY STATUS:", resp.status_code)
         print("RETRY BODY:", resp.text)
@@ -92,11 +92,11 @@ def send_test_message() -> Dict[str, Any]:
             {
                 "user": {
                     "id": "external-user-1",
-                    "name": "Тестовый клиент",
+                    "name": "Тестовый клиент"
                 },
                 "chat": {
                     "id": "external-chat-1",
-                    "name": "Чат с сайта",
+                    "name": "Чат с сайта"
                 },
                 "message": {
                     "id": "msg-1",
