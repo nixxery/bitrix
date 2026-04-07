@@ -4,7 +4,7 @@ import json
 from .bitrix_app_client import (
     register_connector,
     activate_connector,
-    send_test_message_to_bitrix,
+    send_test_message,
 )
 
 app = FastAPI()
@@ -33,6 +33,10 @@ async def bitrix_install(request: Request):
         "data": data
     }
 
+@app.get("/app/test_methods")
+def app_test_methods():
+    return test_methods()
+
 @app.post("/app/register_connector")
 def app_register_connector():
     return register_connector()
@@ -41,6 +45,6 @@ def app_register_connector():
 def app_activate_connector():
     return activate_connector()
 
-@app.post("/app/test_message")
-def app_test_message():
-    return send_test_message_to_bitrix()
+@app.post("/app/send_test_message")
+def app_send_test_message():
+    return send_test_message()
