@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request
 from pathlib import Path
 import json
+
 from .bitrix_app_client import (
+    test_methods,
     register_connector,
     activate_connector,
-    send_test_message,
+    send_test_message
 )
-
 app = FastAPI()
 
 @app.api_route("/bitrix/install", methods=["GET", "POST"])
