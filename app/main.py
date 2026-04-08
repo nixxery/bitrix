@@ -107,41 +107,12 @@ def get_session(session_id: str) -> Optional[dict]:
     return store["sessions"].get(session_id)
 
 
+CHAT4_ACCESS_TOKEN = os.getenv("CHAT4_ACCESS_TOKEN", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1NjYxMzg4LCJpYXQiOjE3NzU2NTQwMDEsImp0aSI6ImQyN2RlYTVmYmM1YjRiOWRhY")
+
 def get_chat4_access_token() -> str:
-    now = time.time()
-
-    if TOKEN_CACHE["access_token"] and now < TOKEN_CACHE["expires_at"] - 30:
-        return TOKEN_CACHE["access_token"]
-
-    if not CHAT4_CLIENT_ID or not CHAT4_CLIENT_SECRET:
-        raise HTTPException(
-            status_code=500,
-            detail="CHAT4_CLIENT_ID or CHAT4_CLIENT_SECRET is missing"
-        )
-
-    resp = requests.post(
-        f"{CHAT4_BASE_URL}/api/auth/token/refresh/",
-        data={
-            "grant_type": "client_credentials",
-            "client_id": CHAT4_CLIENT_ID,
-            "client_secret": CHAT4_CLIENT_SECRET,
-        },
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-        timeout=30,
-    )
-
-    if resp.status_code != 200:
-        raise HTTPException(status_code=500, detail=f"Chat4 token error: {resp.text}")
-
-    data = resp.json()
-    access_token = data.get("access_token")
-
-    if not access_token:
-        raise HTTPException(status_code=500, detail=f"Chat4 token missing access_token: {data}")
-
-    TOKEN_CACHE["access_token"] = access_token
-    TOKEN_CACHE["expires_at"] = now + 3500
-    return access_token
+    if not CHAT4_ACCESS_TOKEN:
+        raise HTTPException(status_code=500, detail="CHAT4_ACCESS_TOKEN is missing")
+    return CHAT4_ACCESS_TOKEN
 
 
 def chat4_request(method: str, path: str, json_body: Optional[dict] = None):
