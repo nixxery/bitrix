@@ -18,6 +18,7 @@ CHAT4_CLIENT_SECRET = os.getenv("CHAT4_CLIENT_SECRET", "J2CwZ8lW03neSguqkUnNBYdE
 
 BITRIX_WEBHOOK_BASE = os.getenv("BITRIX_WEBHOOK_BASE", "https://b24-nzzmi5.bitrix24.ru/rest/1/5r4bbqdvz4jstgoo/")
 BITRIX_CONNECTOR = os.getenv("BITRIX_CONNECTOR", "my_site_chat")
+BITRIX_LINE_ID = os.getenv("BITRIX_LINE_ID", "1")
 
 TOKEN_CACHE = {
     "access_token": None,
@@ -113,7 +114,10 @@ def get_chat4_access_token() -> str:
         return TOKEN_CACHE["access_token"]
 
     if not CHAT4_CLIENT_ID or not CHAT4_CLIENT_SECRET:
-        raise HTTPException(status_code=500, detail="CHAT4_CLIENT_ID or CHAT4_CLIENT_SECRET is missing")
+        raise HTTPException(
+            status_code=500,
+            detail="CHAT4_CLIENT_ID or CHAT4_CLIENT_SECRET is missing"
+        )
 
     resp = requests.post(
         f"{CHAT4_BASE_URL}/api/auth/token/",
@@ -193,13 +197,21 @@ def chat4_send_message(chat_id: str, text: str):
     return resp.json() if resp.text else {"ok": True}
 
 
-def bitrix_send_message(external_user_id: str, external_chat_id: str, text: str, user_name: Optional[str] = None):
+def bitrix_send_message(
+    external_user_id: str,
+    external_chat_id: str,
+    text: str,
+    user_name: Optional[str] = None
+):
     if not BITRIX_WEBHOOK_BASE:
         raise HTTPException(status_code=500, detail="BITRIX_WEBHOOK_BASE is missing")
 
+    if not BITRIX_LINE_ID:
+        raise HTTPException(status_code=500, detail="BITRIX_LINE_ID is missing")
+
     payload = {
         "CONNECTOR": BITRIX_CONNECTOR,
-        "LINE": 1,
+        "LINE": BITRIX_LINE_ID,
         "MESSAGES": [
             {
                 "user": {
@@ -218,8 +230,10 @@ def bitrix_send_message(external_user_id: str, external_chat_id: str, text: str,
         ]
     }
 
+    url = f"{BITRIX_WEBHOOK_BASE.rstrip('/')}/imconnector.send.messages"
+
     resp = requests.post(
-        f"{BITRIX_WEBHOOK_BASE}/imconnector.send.messages",
+        url,
         json=payload,
         timeout=30,
     )
@@ -245,7 +259,7 @@ def debug_store():
     return load_store()
 
 
-@app.post("/chat4/token/test")
+@app.get("/chat4/token/test")
 def chat4_token_test():
     token = get_chat4_access_token()
     return {
