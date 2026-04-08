@@ -120,7 +120,7 @@ def get_chat4_access_token() -> str:
         )
 
     resp = requests.post(
-        f"{CHAT4_BASE_URL}/api/auth/token/",
+        f"{CHAT4_BASE_URL}/api/auth/token/refresh/",
         data={
             "grant_type": "client_credentials",
             "client_id": CHAT4_CLIENT_ID,
