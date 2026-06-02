@@ -8,17 +8,14 @@ import requests
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
+from bitrix_app_client import send_message_to_bitrix
+
 app = FastAPI(title="Bitrix24 ↔ Chat4 Bridge")
 
 STORE_FILE = Path("store.json")
 
 CHAT4_BASE_URL = os.getenv("CHAT4_BASE_URL", "https://app.chat4.tech")
-CHAT4_CLIENT_ID = os.getenv("CHAT4_CLIENT_ID", "app.69b00b3342e7a8.01778095")
-CHAT4_CLIENT_SECRET = os.getenv("CHAT4_CLIENT_SECRET", "J2CwZ8lW03neSguqkUnNBYdEgsjGRM5SatV7F3WtFaLCxCdU25")
-
-BITRIX_WEBHOOK_BASE = os.getenv("BITRIX_WEBHOOK_BASE", "https://b24-nzzmi5.bitrix24.ru/rest/1/5r4bbqdvz4jstgoo/")
-BITRIX_CONNECTOR = os.getenv("BITRIX_CONNECTOR", "my_site_chat")
-BITRIX_LINE_ID = os.getenv("BITRIX_LINE_ID", "1")
+CHAT4_ACCESS_TOKEN = os.getenv("CHAT4_ACCESS_TOKEN", "")
 
 TOKEN_CACHE = {
     "access_token": None,
@@ -107,8 +104,6 @@ def get_session(session_id: str) -> Optional[dict]:
     return store["sessions"].get(session_id)
 
 
-CHAT4_ACCESS_TOKEN = os.getenv("CHAT4_ACCESS_TOKEN", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1NjYxMzg4LCJpYXQiOjE3NzU2NTQwMDEsImp0aSI6ImQyN2RlYTVmYmM1YjRiOWRhY")
-
 def get_chat4_access_token() -> str:
     if not CHAT4_ACCESS_TOKEN:
         raise HTTPException(status_code=500, detail="CHAT4_ACCESS_TOKEN is missing")
@@ -129,23 +124,6 @@ def chat4_request(method: str, path: str, json_body: Optional[dict] = None):
         json=json_body,
         timeout=30,
     )
-
-    if resp.status_code == 401:
-        TOKEN_CACHE["access_token"] = None
-        TOKEN_CACHE["expires_at"] = 0
-        token = get_chat4_access_token()
-
-        resp = requests.request(
-            method=method,
-            url=f"{CHAT4_BASE_URL}{path}",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-            json=json_body,
-            timeout=30,
-        )
 
     return resp
 
@@ -174,45 +152,16 @@ def bitrix_send_message(
     text: str,
     user_name: Optional[str] = None
 ):
-    if not BITRIX_WEBHOOK_BASE:
-        raise HTTPException(status_code=500, detail="BITRIX_WEBHOOK_BASE is missing")
-
-    if not BITRIX_LINE_ID:
-        raise HTTPException(status_code=500, detail="BITRIX_LINE_ID is missing")
-
-    payload = {
-        "CONNECTOR": BITRIX_CONNECTOR,
-        "LINE": BITRIX_LINE_ID,
-        "MESSAGES": [
-            {
-                "user": {
-                    "id": external_user_id,
-                    "name": user_name or external_user_id
-                },
-                "message": {
-                    "id": str(int(time.time() * 1000)),
-                    "date": int(time.time()),
-                    "text": text
-                },
-                "chat": {
-                    "id": external_chat_id
-                }
-            }
-        ]
-    }
-
-    url = f"{BITRIX_WEBHOOK_BASE.rstrip('/')}/imconnector.send.messages"
-
-    resp = requests.post(
-        url,
-        json=payload,
-        timeout=30,
-    )
-
-    if resp.status_code not in (200, 201):
-        raise HTTPException(status_code=500, detail=f"Bitrix send failed: {resp.text}")
-
-    return resp.json() if resp.text else {"ok": True}
+    try:
+        return send_message_to_bitrix(
+            external_user_id=external_user_id,
+            external_chat_id=external_chat_id,
+            external_message_id=str(int(time.time() * 1000)),
+            text=text,
+            user_name=user_name or external_user_id,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Bitrix send failed: {str(e)}")
 
 
 @app.get("/")
@@ -322,7 +271,6 @@ async def bitrix_events(request: Request):
         return {"status": "ignored", "reason": "session_id or text not found", "raw": body}
 
     session = get_session(session_id)
-
     if not session:
         return {"status": "ignored", "reason": f"unknown session_id: {session_id}"}
 
