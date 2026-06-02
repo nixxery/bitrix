@@ -15,7 +15,7 @@ STORE_FILE = Path("store.json")
 CHAT4_BASE_URL = os.getenv("CHAT4_BASE_URL", "https://app.chat4.tech")
 CHAT4_ACCESS_TOKEN = os.getenv("CHAT4_ACCESS_TOKEN", "")
 
-BITRIX_WEBHOOK_BASE = os.getenv("BITRIX_WEBHOOK_BASE", "")
+BITRIX_WEBHOOK_BASE = os.getenv("BITRIX_WEBHOOK_BASE", "https://b24-nzzmi5.bitrix24.ru/rest/1/5r4bbqdvz4jstgoo/")
 BITRIX_CONNECTOR = os.getenv("BITRIX_CONNECTOR", "my_site_chat")
 BITRIX_LINE_ID = os.getenv("BITRIX_LINE_ID", "1")
 
